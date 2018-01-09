@@ -1,0 +1,12 @@
+*.idea
+/out/
+*.class
+.DS_Store/
+.DS_Store
+bin/
+dist/
+build/
+*/.settings/
+.settings
+.metadata/*
+.classpath

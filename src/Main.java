@@ -10,11 +10,11 @@ public class Main {
          * ROBOT STATS
          */
         Robot blue1 = new Robot(25, 5);
-        Robot blue2 = new Robot(70, 10);
+        Robot blue2 = new Robot(9999, 0);
         Robot blue3 = new Robot(99999, 0);
 
-        Robot red1 = new Robot(30, 10);
-        Robot red2 = new Robot(45, 20);
+        Robot red1 = new Robot(30, 5);
+        Robot red2 = new Robot(70, 10);
         Robot red3 = new Robot(99999, 0);
 
         /**
