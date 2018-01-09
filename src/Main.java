@@ -28,7 +28,7 @@ public class Main {
          * 105 teleop no endgame, 135 teleop
          */
         int secondsPerMatch = 105;
-        int matchesToSimulate = 1000;
+        int matchesToSimulate = 100000;
 
         //Create alliances
         Robot[] blueAlliance = new Robot[] {blue1, blue2, blue3};
@@ -54,17 +54,21 @@ public class Main {
                 robot.reset();
             }
 
+            boolean blueOwnsScale;
+
             //Run the match
             for(int j = 1; j < secondsPerMatch; j++) {
 
+                blueOwnsScale = (bluePoints > redPoints);
+
                 //Update blue robots
                 for(Robot robot : blueAlliance) {
-                    robot.cycle();
+                    robot.cycle(!blueOwnsScale);
                 }
 
                 //Update red robots
                 for(Robot robot : redAlliance) {
-                    robot.cycle();
+                    robot.cycle(blueOwnsScale);
                 }
 
                 //Calculate blue cubes at the end of this second
@@ -124,6 +128,9 @@ public class Main {
         //How contested the matches were
         System.out.println("On average, the scale was contested(neutral) for " + Integer.toString((int) contestedTime.getMean())
                 + " seconds, with a standard deviation of " + Integer.toString((int) contestedTime.getStandardDeviation()) + " seconds.");
+        System.out.println("Blue Win Probability: " +  ((double) blueWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
+        System.out.println("Red Win Probability: " +  ((double) redWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
+
     }
 
 }

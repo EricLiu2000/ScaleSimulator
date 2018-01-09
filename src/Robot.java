@@ -25,13 +25,16 @@ public class Robot {
     }
 
     //One cycle will represent one second
-    public void cycle() {
+    // changeForNotOwning is a boolean representing if you do not have the scale currently
+    public void cycle(boolean changeForNotOwning) {
         this.currentTime++;
 
         //if a cycle is over
         if(this.currentTime >= this.thisCycleTime) {
             //calculate next cube drop time
             this.thisCycleTime+= ((r.nextGaussian())*stdDev + avgCycleTime);
+            this.thisCycleTime += (changeForNotOwning ? 2 : -2); // this is kind of hacky because the time is actually added to the previous
+                                                                // cycle, but this should be the same.
 
             //drop a cube
             this.cubesPlaced++;
