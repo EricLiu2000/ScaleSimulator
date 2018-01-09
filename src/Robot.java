@@ -3,11 +3,14 @@ import java.util.Random;
 public class Robot {
     private double avgCycleTime, stdDev, thisCycleTime, currentTime;
 
+    //How many cubes this has placed over the match
     private int cubesPlaced;
 
+    //Used for random cycle time calculations
     private Random r;
 
     /**
+     * Constructs this robot with cycle time and standard deviation
      *
      * @param avgCycleTime in seconds
      * @param stdDev in seconds
@@ -35,10 +38,12 @@ public class Robot {
         }
     }
 
+    //Gets the cubes placed during this match
     public double getCubesPlaced() {
         return cubesPlaced;
     }
 
+    //Used for resetting at the beginning of each match
     public void reset() {
         this.currentTime = 0;
         this.cubesPlaced = 0;
