@@ -1,9 +1,15 @@
+package simulation;
+
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.Random;
 
 public class Main {
+
+    //Color used for robots and scale ownership
+    public enum Color {BLUE, RED, NEUTRAL}
+
     public static void main(String[] args) {
 
         /**
@@ -15,13 +21,13 @@ public class Main {
          * Trash team: 45+ sec cycles, 15-30 sec std dev
          * Non-scaling team: 9999 sec cyces, 0 sec std dev
          */
-        Robot blue1 = new Robot(30, 10);
-        Robot blue2 = new Robot(9999, 0);
-        Robot blue3 = new Robot(9999, 0);
+        Robot blue1 = new Robot(30, 10, Color.BLUE);
+        Robot blue2 = new Robot(9999, 0, Color.BLUE);
+        Robot blue3 = new Robot(9999, 0, Color.BLUE);
 
-        Robot red1 = new Robot(25, 6);
-        Robot red2 = new Robot(9999, 0);
-        Robot red3 = new Robot(9999, 0);
+        Robot red1 = new Robot(25, 6, Color.RED);
+        Robot red2 = new Robot(9999, 0, Color.RED);
+        Robot red3 = new Robot(9999, 0, Color.RED);
 
         /**
          * SIMULATION STATS
@@ -54,21 +60,19 @@ public class Main {
                 robot.reset();
             }
 
-            boolean blueOwnsScale;
+            Color scaleColor = Color.NEUTRAL;
 
             //Run the match
             for(int j = 1; j < secondsPerMatch; j++) {
 
-                blueOwnsScale = (bluePoints > redPoints);
-
                 //Update blue robots
                 for(Robot robot : blueAlliance) {
-                    robot.cycle(!blueOwnsScale);
+                    robot.cycle(scaleColor);
                 }
 
                 //Update red robots
                 for(Robot robot : redAlliance) {
-                    robot.cycle(blueOwnsScale);
+                    robot.cycle(scaleColor);
                 }
 
                 //Calculate blue cubes at the end of this second
@@ -85,10 +89,13 @@ public class Main {
 
                 //Increment points each second
                 if(blueCubes > redCubes) {
+                    scaleColor = Color.BLUE;
                     bluePoints++;
                 } else if(redCubes > blueCubes) {
+                    scaleColor = Color.RED;
                     redPoints++;
                 } else {
+                    scaleColor = Color.NEUTRAL;
                     //assuming neutral means contested, with the exception of the first period
                     if(bluePoints!=0 || redPoints!=0) {
                         contestedMatchTime++;
@@ -101,9 +108,9 @@ public class Main {
             finalRedPoints.addValue(redPoints);
 
             if(bluePoints > redPoints) {
-                blueWinningAmount.addValue(bluePoints-redPoints);
+                blueWinningAmount.addValue(bluePoints - redPoints);
             } else if(redPoints > bluePoints) {
-                redWinningAmount.addValue(redPoints-bluePoints);
+                redWinningAmount.addValue(redPoints - bluePoints);
             }
 
             contestedTime.addValue(contestedMatchTime);
@@ -128,9 +135,10 @@ public class Main {
         //How contested the matches were
         System.out.println("On average, the scale was contested(neutral) for " + Integer.toString((int) contestedTime.getMean())
                 + " seconds, with a standard deviation of " + Integer.toString((int) contestedTime.getStandardDeviation()) + " seconds.");
-        System.out.println("Blue Win Probability: " +  ((double) blueWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
-        System.out.println("Red Win Probability: " +  ((double) redWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
+
+        //Win probabilities
+        System.out.println("Blue Win Probability: " + ((double) blueWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
+        System.out.println("Red Win Probability: " + ((double) redWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
 
     }
-
 }
