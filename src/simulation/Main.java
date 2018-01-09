@@ -1,14 +1,8 @@
 package simulation;
 
-import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-import java.util.Random;
-
 public class Main {
-
-    //Color used for robots and scale ownership
-    public enum Color {BLUE, RED, NEUTRAL}
 
     public static void main(String[] args) {
 
@@ -19,22 +13,18 @@ public class Main {
          * World-class-team: 20-30 sec cycles, 5-10 sec std dev
          * Decent team: 30-45 sec cycles, 10-20 sec std dev
          * Trash team: 45+ sec cycles, 15-30 sec std dev
-         * Non-scaling team: 9999 sec cyces, 0 sec std dev
+         * Non-scaling team: 9999 sec cycles, 0 sec std dev
          */
-        Robot blue1 = new Robot(30, 10, Color.BLUE);
-        Robot blue2 = new Robot(9999, 0, Color.BLUE);
-        Robot blue3 = new Robot(9999, 0, Color.BLUE);
+        Robot blue1 = new Robot(20, 10);
+        Robot blue2 = new Robot(30, 10);
+        Robot blue3 = new Robot(9999, 0);
 
-        Robot red1 = new Robot(25, 6, Color.RED);
-        Robot red2 = new Robot(9999, 0, Color.RED);
-        Robot red3 = new Robot(9999, 0, Color.RED);
+        Robot red1 = new Robot(25, 10);
+        Robot red2 = new Robot(40, 15);
+        Robot red3 = new Robot(40, 15);
 
-        /**
-         * SIMULATION STATS
-         * 105 teleop no endgame, 135 teleop
-         */
-        int secondsPerMatch = 105;
-        int matchesToSimulate = 100000;
+        int secondsPerMatch = Constants.SECONDS_PER_MATCH;
+        int matchesToSimulate = Constants.MATCHES_TO_SIMULATE;
 
         //Create alliances
         Robot[] blueAlliance = new Robot[] {blue1, blue2, blue3};
@@ -50,6 +40,7 @@ public class Main {
         //Run multiple matches
         for(int i = 0; i < matchesToSimulate; i++) {
             int bluePoints = 0, redPoints = 0, contestedMatchTime = 0;
+            double blueAdvantage = 0;
 
             //Reset each alliance's robots for each match
             for(Robot robot : blueAlliance) {
@@ -60,19 +51,17 @@ public class Main {
                 robot.reset();
             }
 
-            Color scaleColor = Color.NEUTRAL;
-
             //Run the match
             for(int j = 1; j < secondsPerMatch; j++) {
 
                 //Update blue robots
                 for(Robot robot : blueAlliance) {
-                    robot.cycle(scaleColor);
+                    robot.cycle(blueAdvantage);
                 }
 
                 //Update red robots
                 for(Robot robot : redAlliance) {
-                    robot.cycle(scaleColor);
+                    robot.cycle(-blueAdvantage);
                 }
 
                 //Calculate blue cubes at the end of this second
@@ -87,15 +76,15 @@ public class Main {
                     redCubes+=robot.getCubesPlaced();
                 }
 
+                //Calculated based on the number of cubes blue has over red, and is bounded to [-MAX_ADVANTAGE_TIME, MAX_ADVANTAGE_TIME]
+                blueAdvantage = Math.min(Constants.MAX_ADVANTAGE_TIME, Math.max(-Constants.MAX_ADVANTAGE_TIME, blueCubes - redCubes));
+
                 //Increment points each second
                 if(blueCubes > redCubes) {
-                    scaleColor = Color.BLUE;
                     bluePoints++;
                 } else if(redCubes > blueCubes) {
-                    scaleColor = Color.RED;
                     redPoints++;
                 } else {
-                    scaleColor = Color.NEUTRAL;
                     //assuming neutral means contested, with the exception of the first period
                     if(bluePoints!=0 || redPoints!=0) {
                         contestedMatchTime++;
@@ -139,6 +128,5 @@ public class Main {
         //Win probabilities
         System.out.println("Blue Win Probability: " + ((double) blueWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
         System.out.println("Red Win Probability: " + ((double) redWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
-
     }
 }
