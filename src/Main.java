@@ -9,13 +9,13 @@ public class Main {
         /**
          * ROBOT STATS
          */
-        Robot blue1 = new Robot(25, 5);
+        Robot blue1 = new Robot(25, 0);
         Robot blue2 = new Robot(9999, 0);
-        Robot blue3 = new Robot(99999, 0);
+        Robot blue3 = new Robot(9999, 0);
 
-        Robot red1 = new Robot(30, 5);
-        Robot red2 = new Robot(70, 10);
-        Robot red3 = new Robot(99999, 0);
+        Robot red1 = new Robot(50, 0);
+        Robot red2 = new Robot(9999, 0);
+        Robot red3 = new Robot(9999, 0);
 
         /**
          * SIMULATION STATS
@@ -31,12 +31,12 @@ public class Main {
         SummaryStatistics finalRedPoints = new SummaryStatistics();
         SummaryStatistics blueWinningAmount = new SummaryStatistics();
         SummaryStatistics redWinningAmount = new SummaryStatistics();
+        SummaryStatistics contestedTime = new SummaryStatistics();
 
         //Run multiple matches
         for(int i = 0; i < matchesToSimulate; i++) {
-//            System.out.println("Running match " + Integer.toString(i+1));
             //Run each match
-            int bluePoints = 0, redPoints = 0;
+            int bluePoints = 0, redPoints = 0, contestedMatchTime = 0;
 
             for(Robot robot : blueAlliance) {
                 robot.reset();
@@ -45,6 +45,7 @@ public class Main {
             for(Robot robot : redAlliance) {
                 robot.reset();
             }
+
             for(int j = 1; j < secondsPerMatch; j++) {
 
                 //Update blue robots
@@ -74,9 +75,15 @@ public class Main {
                     bluePoints++;
                 } else if(redCubes > blueCubes) {
                     redPoints++;
+                } else {
+                    //assuming neutral means contested, with the exception of the first period
+                    if(bluePoints!=0 || redPoints!=0) {
+                        contestedMatchTime++;
+                    }
                 }
             }
 
+            //Store outcome of match
             finalBluePoints.addValue(bluePoints);
             finalRedPoints.addValue(redPoints);
 
@@ -86,7 +93,8 @@ public class Main {
                 redWinningAmount.addValue(redPoints-bluePoints);
             }
 
-            //Store outcome of match
+            contestedTime.addValue(contestedMatchTime);
+
         }
 
         //How many matches were won by who
@@ -103,6 +111,9 @@ public class Main {
             System.out.println("In their winning matches, the red alliance won by an average of " + Integer.toString((int) redWinningAmount.getMean()) + " points with a standard deviation of "
                     + Integer.toString((int) redWinningAmount.getStandardDeviation()) + " points.");
         }
+
+        System.out.println("On average, the scale was contested(neutral) for " + Integer.toString((int) contestedTime.getMean())
+                + " seconds, with a standard deviation of " + Integer.toString((int) contestedTime.getStandardDeviation()) + " seconds.");
     }
 
 }
