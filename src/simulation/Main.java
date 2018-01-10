@@ -10,18 +10,18 @@ public class Main {
          * ROBOT STATS
          *
          * Disclaimer: These numbers were entirely made up and not necessarily accurate.
-         * World-class-team: 20-30 sec cycles, 5-10 sec std dev
-         * Decent team: 30-45 sec cycles, 10-20 sec std dev
-         * Trash team: 45+ sec cycles, 15-30 sec std dev
-         * Non-scaling team: 9999 sec cycles, 0 sec std dev
+         * World-class-team: 20-30 sec cycles, 5-10 sec variance
+         * Decent team: 30-45 sec cycles, 10-20 sec variance
+         * Trash team: 45+ sec cycles, 15-30 sec variance
+         * Non-scaling team: 9999 sec cycles, 0 sec variance
          */
-        Robot blue1 = new Robot(20, 10);
-        Robot blue2 = new Robot(30, 10);
+        Robot blue1 = new Robot(20, 36);
+        Robot blue2 = new Robot(9999, 0);
         Robot blue3 = new Robot(9999, 0);
 
-        Robot red1 = new Robot(25, 10);
-        Robot red2 = new Robot(40, 15);
-        Robot red3 = new Robot(40, 15);
+        Robot red1 = new Robot(15, 36);
+        Robot red2 = new Robot(9999, 0);
+        Robot red3 = new Robot(9999, 0);
 
         int secondsPerMatch = Constants.SECONDS_PER_MATCH;
         int matchesToSimulate = Constants.MATCHES_TO_SIMULATE;

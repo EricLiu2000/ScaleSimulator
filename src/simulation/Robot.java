@@ -1,29 +1,38 @@
 package simulation;
 
-import java.util.Random;
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 
 public class Robot {
-    private double avgCycleTime, stdDev, thisCycleTime, currentTime;
+    private double minCycleTime, variance, thisCycleTime, currentTime;
 
     //How many cubes this has placed over the match
     private int cubesPlaced;
 
     //Used for random cycle time calculations
-    private Random r;
+    private ChiSquaredDistribution chi = new ChiSquaredDistribution(1);
 
     /**
      * Constructs this robot with min cycle time and standard deviation
      *
      * @param minCycleTime in seconds
-     * @param stdDev in seconds
+     * @param variance in seconds
      */
-    public Robot(double minCycleTime, double stdDev) {
-        this.avgCycleTime = minCycleTime;
-        this.stdDev = stdDev;
-        this.r = new Random();
-        this.thisCycleTime = (Math.pow(r.nextGaussian(), 2)*stdDev) + minCycleTime;
+    public Robot(double minCycleTime, double variance) {
+        this.minCycleTime = minCycleTime;
+        this.variance = variance;
+
+        this.thisCycleTime = getNextCycleTime();
         this.cubesPlaced = 0;
         this.currentTime = 0;
+    }
+
+    /**
+     * Gets the time it takes the next cycle to finish
+     *
+     * @return the time it will take for the next cycle to finish
+     */
+    private double getNextCycleTime() {
+        return minCycleTime + chi.sample()*variance/chi.getNumericalVariance();
     }
 
     /**
@@ -37,7 +46,7 @@ public class Robot {
         //if a cycle is over
         if(this.currentTime + scaleAdvantageTime >= this.thisCycleTime) {
             //calculate next cube drop time
-            this.thisCycleTime += ((r.nextGaussian()) * stdDev + avgCycleTime);
+            this.thisCycleTime += getNextCycleTime();
 
             //drop a cube
             this.cubesPlaced++;
@@ -53,6 +62,6 @@ public class Robot {
     public void reset() {
         this.currentTime = 0;
         this.cubesPlaced = 0;
-        this.thisCycleTime = (r.nextGaussian())*stdDev + avgCycleTime;
+        this.thisCycleTime = getNextCycleTime();
     }
 }
