@@ -128,5 +128,20 @@ public class Main {
         //Win probabilities
         System.out.println("Blue Win Probability: " + ((double) blueWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
         System.out.println("Red Win Probability: " + ((double) redWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
+
+        //Blue Wins the Scale Probabilities
+        System.out.println("Blue Wins the Scale Probability: " + ((double) blueWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
+        System.out.println("Red Wins the Scale Probability: " + ((double) redWinningAmount.getN())/((double) (blueWinningAmount.getN() + redWinningAmount.getN())));
+
+        double blueTotal = blueWinningAmount.getN() * blueWinningAmount.getMean();
+        double redTotal = redWinningAmount.getN() * redWinningAmount.getMean();
+
+        if (blueTotal > redTotal) {
+            System.out.println("Blue will have an advantage of " + (blueTotal - redTotal)/Constants.MATCHES_TO_SIMULATE + " on Average");
+        }
+        else {
+            System.out.println("Red will have an advantage of " + (redTotal - blueTotal)/Constants.MATCHES_TO_SIMULATE + " on Average");
+
+        }
     }
 }
